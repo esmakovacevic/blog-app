@@ -17,15 +17,38 @@ export default function Home() {
   // const { data: posts } = await supabase
   //   .from("posts")
   //   .select("id,created_at,title,subtitle,text");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
+ // useEffect bavi preusmjrava korisnika na stranicu /posts ako imaju prijavljen racun,nfunkcija handleAuthStateChange ce biti pozvana s događajem koji označava 
+  //promjenu autentifikacijskog stanja tj
+  //kada se korisnik prijavi, funkcija ce biti pozvana s vrijednoscu "SIGNED_IN" i slu
   useEffect(() => {
-    supabase.auth.onAuthStateChange((_event, session) => {
-      // Handle auth state changes
-      console.log(session);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        router.replace("/posts");
+      }
+      if (event === "SIGNED_IN") {
+        // console.log(session);
+        //console.log("token " + session.access_token);
+        //console.log("user " + session.user);
+        //const expiresAt = new Date(session.expires_at * 1000); // Convert the Unix timestamp to JavaScript Date object
+        //console.log("Access token will expire at:", expiresAt);
+        router.push("/posts");
+      }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+//provjeravva unesene e-adrese i lozinke, a zatim poziva supabase.auth.signInWithPassword
+// da autentificira korisnika koristeci njihovu e-adresu i lozinku. 
+//Ako je prijava  uspjesna, korisnik ce biti preusmjeren na stranicu /posts.
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,10 +59,17 @@ export default function Home() {
     }
 
     try {
-      const { error, user } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
+      const { error, user } = await supabase.auth.signInWithPassword(
+        {
+          email: email,
+          password: password,
+        },
+        {
+          persistSession: true,// korisnicka sesija se cuva,
+          // i korisnik ce ostati prijavljen cak i ako
+          // zatvori i ponovno otvori browser ili napusti aplikaciju
+        }
+      );
 
       if (error) {
         if (
@@ -53,7 +83,7 @@ export default function Home() {
           console.error("Error logging in:", error.message);
         }
       } else {
-        // Korisnik uspjesno logovan
+        // User successfullyd logged in
         router.push("/posts");
       }
     } catch (error) {
@@ -66,19 +96,7 @@ export default function Home() {
       provider: "google",
     });
 
-    if (error) {
-      console.error(error);
-    } else {
-      router.push("/posts");
-
-      // Listen for logout event
-      // supabase.auth.onAuthStateChange((event, session) => {
-      //   if (event === "SIGNED_OUT") {
-      //     // Redirect back to the home page after logout
-      //     router.push("/");
-      //   }
-      // });
-    }
+ 
   };
   return (
     <div className="page">

@@ -1,9 +1,9 @@
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -100,27 +100,26 @@ a {
     color-scheme: dark;
   }
 }
-.page{
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-   display: flex;
-   flex-direction: column;
-   gap: 20px;
-   justify-content: center;
-   align-items: center;
+.page {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
 }
-.button{
+.button {
   height: 30px;
   width: 60px;
   background-color: white;
   color: black;
-  border:none;
+  border: none;
   border-radius: 8px;
 }
-.input{
+.input {
   border-radius: 10px;
   outline: none;
   border: none;
@@ -130,23 +129,87 @@ a {
   width: 410px;
   margin-bottom: 10px;
   margin-top: 10px;
-  box-shadow: 0 0 20px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
   opacity: 0.9;
   font-family: Arial, sans-serif;
 }
-.signup{
+.signup {
   position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-   display: flex;
-   flex-direction: column;
-   gap: 20px;
-   justify-content: center;
-   align-items: center;
-}
-.button-wrap{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.button-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(223, 241, 247);
+}
+
+.navlinks {
+  display: flex;
+}
+
+.navlinks a {
+  text-decoration: none;
+  color: black;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.header-button {
+  display: flex;
+  justify-content: flex-end;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-list {
+  margin-top: 30px;
+
+  display: grid;
+  align-items: flex-start;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 30px;
+}
+
+ul,
+li {
+  margin-bottom: 20px;
+  list-style: none;
+}
+.background {
+  width: 250px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+  color: black;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.2)
+  );
+  box-shadow: 0 8px 50px 0 rgba(187, 188, 202, 0.37);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 10px;
+  height: 300px;
+  overflow: hidden; /* or overflow: hidden; */
 }

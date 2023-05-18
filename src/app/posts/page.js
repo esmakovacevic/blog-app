@@ -1,20 +1,20 @@
-'use client'
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 
+import Link from "next/link";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
-const router=useRouter();
+
   useEffect(() => {
     const fetchPosts = async () => {
       const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) {
-        console.error('Error fetching posts:', error.message);
+        console.error("Error fetching posts:", error.message);
       } else {
         setPosts(data);
       }
@@ -23,22 +23,19 @@ const router=useRouter();
     fetchPosts();
   }, []);
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error.message);
-    } else {
-    router.push('/')
-    }
-  };
-
   return (
-    <div>
+    <div className="container">
       <h1>Posts</h1>
-      <button onClick={handleSignOut}>Sign Out</button>
-      <ul>
+      <ul className="post-list">
         {posts.map((post) => (
-          <li key={post.id}>{post.title}</li>
+          <div className="background">
+            <Link href={`/posts/${post.id}`}>
+              <li key={post.id}>
+                <h2>{post.title}</h2>
+                <p>{post.subtitle}</p>
+              </li>
+            </Link>
+          </div>
         ))}
       </ul>
     </div>
