@@ -11,16 +11,41 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
+  
+    if (!email || !password) {
+      console.log("Please enter your email and password.");
+      return;
+    }
+  
+    try {
+      const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+  
+      if (error) {
+        console.error("Error signing up:", error.message);
+      } else {
+        // dodavanje korisnika u  roles tabelu sa 'user' rolom
+        const { data, error: insertError } = await supabase
+          .from("roles")
+          .insert([{ email, role: "user" }]);
+  
+        if (insertError) {
+          console.error("Error inserting user role:", insertError.message);
+        } else {
+          console.log("User role inserted successfully:", data);
+        }
+  
+        router.push("/");
+      }
+    } catch (error) {
       console.error("Error signing up:", error.message);
-    } else {
-      router.push("/");
     }
   };
+  
 
   return (
     <div className="signup">

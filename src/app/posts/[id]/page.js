@@ -29,8 +29,8 @@ const Post = ({ params }) => {
       {form.length === 0 ? (
         <p>No data found.</p>
       ) : (
-        <div>
-          <div key={form.id}>
+        <div className="mainaddwrap">
+          <div className="addwrap" key={form.id}>
             <h1>{form.title}</h1>
             <p>{form.subtitle}</p>
             <p>{form.text}</p>

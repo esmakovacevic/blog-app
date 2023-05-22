@@ -22,7 +22,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
- // useEffect bavi preusmjrava korisnika na stranicu /posts ako imaju prijavljen racun,nfunkcija handleAuthStateChange ce biti pozvana s događajem koji označava 
+  // useEffect bavi preusmjrava korisnika na stranicu /posts ako imaju prijavljen racun,nfunkcija handleAuthStateChange ce biti pozvana s događajem koji označava
   //promjenu autentifikacijskog stanja tj
   //kada se korisnik prijavi, funkcija ce biti pozvana s vrijednoscu "SIGNED_IN" i slu
   useEffect(() => {
@@ -46,9 +46,9 @@ export default function Home() {
       subscription.unsubscribe();
     };
   }, []);
-//provjeravva unesene e-adrese i lozinke, a zatim poziva supabase.auth.signInWithPassword
-// da autentificira korisnika koristeci njihovu e-adresu i lozinku. 
-//Ako je prijava  uspjesna, korisnik ce biti preusmjeren na stranicu /posts.
+  //provjeravva unesene e-adrese i lozinke, a zatim poziva supabase.auth.signInWithPassword
+  // da autentificira korisnika koristeci njihovu e-adresu i lozinku.
+  //Ako je prijava  uspjesna, korisnik ce biti preusmjeren na stranicu /posts.
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -65,7 +65,7 @@ export default function Home() {
           password: password,
         },
         {
-          persistSession: true,// korisnicka sesija se cuva,
+          persistSession: true, // korisnicka sesija se cuva,
           // i korisnik ce ostati prijavljen cak i ako
           // zatvori i ponovno otvori browser ili napusti aplikaciju
         }
@@ -95,8 +95,6 @@ export default function Home() {
     const { user, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
     });
-
- 
   };
   return (
     <div className="page">
