@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Link from "next/link";
-
+import validator from "validator";
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +18,14 @@ export default function Signup() {
       console.log("Please enter your email and password.");
       return;
     }
-  
+    if (!validator.isStrongPassword(password)){
+      alert('Invalid password. At least 8 char, upperCase, lowerCase, number and sign.')
+      return;
+    }
+    if(!validator.isEmail(email)){
+      alert('Not correct email')
+      return;
+    }
     try {
       const { user, error } = await supabase.auth.signUp({
         email,

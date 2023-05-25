@@ -8,7 +8,7 @@ import { useState } from "react";
 import { supabase } from "./lib/supabase";
 import Input from "./components/Input";
 import { useEffect } from "react";
-
+import validator from "validator";
 export default function Home() {
   // const supabase = createServerComponentSupabaseClient({
   //   headers,
@@ -58,7 +58,12 @@ export default function Home() {
       return;
     }
 
+    if(!validator.isEmail(email)){
+      alert('Not correct email')
+      return;
+    }
     try {
+      
       const { error, user } = await supabase.auth.signInWithPassword(
         {
           email: email,
@@ -72,13 +77,12 @@ export default function Home() {
       );
 
       if (error) {
-        if (
-          error.message === "Invalid login credentials" ||
-          error.message === "No user found for this email"
-        ) {
-          alert("Invalid email or password. Please try again.");
+        if (error.message === "Invalid login credentials") {
+          alert("Invalid credentials");
+          return;
         } else if (error.message === "Email not confirmed") {
           alert("Please confirm your email");
+          return;
         } else {
           console.error("Error logging in:", error.message);
         }

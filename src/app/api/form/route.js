@@ -10,13 +10,13 @@ export async function POST(request) {
 
     // Validation
     if (!validator.isLength(title, { min: 1 })) {
-      throw new Error('Invalid title length');
+      throw new Error("Invalid title length");
     }
-    if (!validator.isLength(subtitle, { min: 1})) {
-      throw new Error('Invalid subtitle length');
+    if (!validator.isLength(subtitle, { min: 1 })) {
+      throw new Error("Invalid subtitle length");
     }
     if (!validator.isLength(text, { min: 1 })) {
-      throw new Error('Invalid text length');
+      throw new Error("Invalid text length");
     }
 
     // Sanitization and HTML escaping
@@ -25,7 +25,7 @@ export async function POST(request) {
     const sanitizedText = validator.escape(validator.trim(text));
 
     // Insert the sanitized values into the database
-    const { data, error } = await supabase.from('posts').insert({
+    const { data, error } = await supabase.from("posts").insert({
       title: sanitizedTitle,
       subtitle: sanitizedSubtitle,
       text: sanitizedText,
@@ -34,9 +34,15 @@ export async function POST(request) {
       throw error;
     }
 
-    return NextResponse.json({ title: sanitizedTitle, subtitle: sanitizedSubtitle, text: sanitizedText });
+    return NextResponse.json({
+      title: sanitizedTitle,
+      subtitle: sanitizedSubtitle,
+      text: sanitizedText,
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
-

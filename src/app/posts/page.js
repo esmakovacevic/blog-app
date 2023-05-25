@@ -42,7 +42,6 @@ export default function Posts() {
   }, []);
 
   const fetchPosts = async () => {
-
     const { data, error } = await supabase
       .from("posts")
       .select("*")
@@ -55,24 +54,24 @@ export default function Posts() {
   };
 
   const handleDeletePost = async (postId) => {
-// console.log(postId)
-//     try {
-//       const response=await fetch(`/api/${postId}`,{
-//         method:"DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-//     console.log(response);
-//       if (response.ok) {
-//         alert("Post deleted successfully")
-//         fetchPosts();
-//       }else{
-//         throw new Error("Failed to delete post")
-//       }
-//     } catch (error) {
-//       console.error("Error deleting post: ",error)
-//     }
+    // console.log(postId)
+    //     try {
+    //       const response=await fetch(`/api/${postId}`,{
+    //         method:"DELETE",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //       });
+    //     console.log(response);
+    //       if (response.ok) {
+    //         alert("Post deleted successfully")
+    //         fetchPosts();
+    //       }else{
+    //         throw new Error("Failed to delete post")
+    //       }
+    //     } catch (error) {
+    //       console.error("Error deleting post: ",error)
+    //     }
     const { error } = await supabase.from("posts").delete().eq("id", postId);
     if (error) {
       console.error("Error deleting post:", error.message);

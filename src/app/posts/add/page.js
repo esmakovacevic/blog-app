@@ -12,23 +12,23 @@ const handleSubmit = async (event) => {
 
   // Validation
   if (!validator.isLength(title, { min: 1 })) {
-    alert('Invalid title length');
+    alert("Invalid title length");
     return;
   }
   if (!validator.isLength(subtitle, { min: 1 })) {
-    alert('Invalid subtitle length');
+    alert("Invalid subtitle length");
     return;
   }
   if (!validator.isLength(text, { min: 1 })) {
-    alert('Invalid text length');
+    alert("Invalid text length");
     return;
   }
 
   try {
-    const response = await fetch('/api/form', {
-      method: 'POST',
+    const response = await fetch("/api/form", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ title, subtitle, text }),
     });
@@ -37,12 +37,12 @@ const handleSubmit = async (event) => {
       // Handle success
       console.log(data);
       event.target.reset();
-      alert('Post added successfully!');
+      alert("Post added successfully!");
     } else {
-      throw new Error('Failed to submit form');
+      throw new Error("Failed to submit form");
     }
   } catch (error) {
-    console.error('Error submitting form:', error);
+    console.error("Error submitting form:", error);
   }
 
   // const { insertData, insertError } = await supabase
