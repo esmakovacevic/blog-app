@@ -2,14 +2,21 @@
 
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
+import { supabase } from "@/app/lib/supabase";
 import validator from "validator";
+
 const handleSubmit = async (event) => {
   event.preventDefault();
 
   const title = event.target.title.value;
   const subtitle = event.target.subtitle.value;
   const text = event.target.text.value;
-
+  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  let email = user.email
+  console.log(email)
   // Validation
   if (!validator.isLength(title, { min: 1 })) {
     alert("Invalid title length");
@@ -23,14 +30,15 @@ const handleSubmit = async (event) => {
     alert("Invalid text length");
     return;
   }
-
+ 
   try {
-    const response = await fetch("/api/form", {
+
+    const response = await fetch(`/api/form`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, subtitle, text }),
+      body: JSON.stringify({ title, subtitle, text,email }),
     });
     if (response.ok) {
       const data = await response.json();

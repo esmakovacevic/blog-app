@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 import validator from "validator";
 
-// /api/form/route.js
+
 export async function POST(request) {
   try {
-    const { title, subtitle, text } = await request.json();
-
+    const { title, subtitle, text ,email} = await request.json();
+console.log(email)
     // Validation
     if (!validator.isLength(title, { min: 1 })) {
       throw new Error("Invalid title length");
@@ -24,11 +24,11 @@ export async function POST(request) {
     const sanitizedSubtitle = validator.escape(validator.trim(subtitle));
     const sanitizedText = validator.escape(validator.trim(text));
 
-    // Insert the sanitized values into the database
     const { data, error } = await supabase.from("posts").insert({
       title: sanitizedTitle,
       subtitle: sanitizedSubtitle,
       text: sanitizedText,
+      email,
     });
     if (error) {
       throw error;
@@ -38,6 +38,7 @@ export async function POST(request) {
       title: sanitizedTitle,
       subtitle: sanitizedSubtitle,
       text: sanitizedText,
+      email
     });
   } catch (error) {
     return NextResponse.json(
@@ -46,3 +47,5 @@ export async function POST(request) {
     );
   }
 }
+
+

@@ -4,10 +4,12 @@ import { supabase } from "../lib/supabase";
 
 import Link from "next/link";
 import Button from "../components/Button";
+import { useRouter } from "next/navigation";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
   const [userRole, setUserRole] = useState(null);
+  const router=useRouter();
   useEffect(() => {
     fetchPosts();
 
@@ -82,6 +84,10 @@ export default function Posts() {
     }
   };
 
+  const handleEditPost=(postId)=>{
+    router.push(`/posts/edit/${postId}`)
+  }
+
   return (
     <div className="container">
       <h1>Posts</h1>
@@ -93,18 +99,24 @@ export default function Posts() {
                 <h2>{post.title}</h2>
                 <p>{post.subtitle}</p>
               </Link>
-              {userRole === "admin" && ( // rendanje  delete buttona samo ako je user admin
+              {userRole === "admin" && ( // rendanje  delete i edit buttona samo ako je user admin
                 <div className="buttonhover">
                   <div className="button-overlay">
                     <Button
                       className="button"
+                      style={{color:'red'}}
                       onClick={() => handleDeletePost(post.id)}
                     >
                       Delete
                     </Button>
+                    <Button className='button' 
+                    onClick={()=>handleEditPost(post.id)}>Edit</Button>
                   </div>
                 </div>
               )}
+          
+           
+              
             </li>
           </div>
         ))}

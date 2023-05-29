@@ -277,6 +277,11 @@ li {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.5s linear;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 .background:hover .button-overlay {
   visibility: visible;
