@@ -1,14 +1,13 @@
-'use client'
+"use client";
 import { supabase } from "@/app/lib/supabase";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 
 export default function Edit({ params }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [text, setText] = useState("");
-const router=useRouter();
+  const router = useRouter();
   useEffect(() => {
     fetchPostData();
   }, []);
@@ -34,28 +33,39 @@ const router=useRouter();
   };
 
   const handleUpdatePost = async () => {
-
     try {
-     const response=await fetch(`/api/update`,{
-        method:'PUT',
-        headers:{
-            "Content-Type":"application/json"
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let email = user.email;
+      // const { data: session ,erro} = await supabase.auth.getSession();
+
+      //   const authToken = session.session.access_token;
+      //   console.log(authToken)
+
+      // let metadata = user.id
+
+      const response = await fetch(`/api/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": `${authToken}`,
         },
         body: JSON.stringify({
-            title,
-            subtitle,
-            text,
-            id:params.id,
-          },),
-          
-     })
-     if(response.ok){
+          title,
+          subtitle,
+          text,
+          id: params.id,
+          email,
+        }),
+      });
+      if (response.ok) {
         alert("Successfull updated");
-router.push('/posts')
-         }
+        router.push("/posts");
 
- 
-       else {
+        const data = await response.json();
+        console.log(data);
+      } else {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
@@ -63,7 +73,21 @@ router.push('/posts')
       console.error("Error updating post:", error.message);
     }
   };
+  // const handleUpdatePost = async () => {
 
+  //   try {
+
+  //    const {data,error}=await supabase.from('postovi').update({title,subtitle,text}).eq("id",params.id)
+  //   console.log(data);
+  //    if(error)
+  //    {throw error}else{
+  //     alert('Data updated! ');
+  //     router.push('/posts')
+  //    }
+  //   } catch (error) {
+  //     console.error("Error updating post:", error.message);
+  //   }
+  // };
   return (
     <div className="container">
       <h1>Edit Post</h1>

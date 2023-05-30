@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 export default function Posts() {
   const [posts, setPosts] = useState([]);
   const [userRole, setUserRole] = useState(null);
-  const router=useRouter();
+  const router = useRouter();
   useEffect(() => {
     fetchPosts();
 
@@ -84,9 +84,9 @@ export default function Posts() {
     }
   };
 
-  const handleEditPost=(postId)=>{
-    router.push(`/posts/edit/${postId}`)
-  }
+  const handleEditPost = (postId) => {
+    router.push(`/posts/edit/${postId}`);
+  };
 
   return (
     <div className="container">
@@ -104,19 +104,20 @@ export default function Posts() {
                   <div className="button-overlay">
                     <Button
                       className="button"
-                      style={{color:'red'}}
+                      style={{ color: "red" }}
                       onClick={() => handleDeletePost(post.id)}
                     >
                       Delete
                     </Button>
-                    <Button className='button' 
-                    onClick={()=>handleEditPost(post.id)}>Edit</Button>
+                    <Button
+                      className="button"
+                      onClick={() => handleEditPost(post.id)}
+                    >
+                      Edit
+                    </Button>
                   </div>
                 </div>
               )}
-          
-           
-              
             </li>
           </div>
         ))}

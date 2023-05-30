@@ -3,20 +3,24 @@
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import { supabase } from "@/app/lib/supabase";
+import { useRouter } from "next/navigation";
 import validator from "validator";
 
+
+export default function Posts() {
+  const router=useRouter();
 const handleSubmit = async (event) => {
   event.preventDefault();
-
+  
   const title = event.target.title.value;
   const subtitle = event.target.subtitle.value;
   const text = event.target.text.value;
   
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  let email = user.email
-  console.log(email)
+  } = await supabase.auth.getUser();
+  let email = user.email;
+  console.log(email);
   // Validation
   if (!validator.isLength(title, { min: 1 })) {
     alert("Invalid title length");
@@ -30,15 +34,14 @@ const handleSubmit = async (event) => {
     alert("Invalid text length");
     return;
   }
- 
-  try {
 
+  try {
     const response = await fetch(`/api/form`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, subtitle, text,email }),
+      body: JSON.stringify({ title, subtitle, text, email }),
     });
     if (response.ok) {
       const data = await response.json();
@@ -46,6 +49,7 @@ const handleSubmit = async (event) => {
       console.log(data);
       event.target.reset();
       alert("Post added successfully!");
+      router.push('/posts')
     } else {
       throw new Error("Failed to submit form");
     }
@@ -66,8 +70,6 @@ const handleSubmit = async (event) => {
   // event.target.reset();
   // alert("Post added successfully!");
 };
-
-export default function Posts() {
   return (
     <div className="mainaddwrap">
       <div className="addwrap">
@@ -94,7 +96,39 @@ export default function Posts() {
             name="text"
             placeholder="Write text.."
           />
+          <p>Picture</p>
 
+          <div>
+            <Input
+              className="input"
+              type="file"
+              name="picture"
+              id="fileInput"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                const url = URL.createObjectURL(file);
+                document
+                  .getElementById("previewImage")
+                  .setAttribute("src", url);
+                document.getElementById("previewImage").style.display = "block";
+              }}
+            />
+
+            <Button
+              className="choosepic"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("fileInput").click();
+              }}
+            >
+              Choose Picture...
+            </Button>
+            <img
+              id="previewImage"
+              style={{ display: "none", height: "100px", width: "100px" }}
+            />
+          </div>
           <div className="button">
             <Button type="submit" className="button">
               Submit

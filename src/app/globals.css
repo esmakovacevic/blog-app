@@ -287,3 +287,12 @@ li {
   visibility: visible;
   opacity: 1;
 }
+.choosepic{
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(106, 171, 231);
+  color: black;
+  padding: 5px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
