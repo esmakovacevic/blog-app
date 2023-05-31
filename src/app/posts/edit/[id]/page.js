@@ -32,62 +32,62 @@ export default function Edit({ params }) {
     }
   };
 
-  const handleUpdatePost = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      let email = user.email;
-      // const { data: session ,erro} = await supabase.auth.getSession();
-
-      //   const authToken = session.session.access_token;
-      //   console.log(authToken)
-
-      // let metadata = user.id
-
-      const response = await fetch(`/api/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `${authToken}`,
-        },
-        body: JSON.stringify({
-          title,
-          subtitle,
-          text,
-          id: params.id,
-          email,
-        }),
-      });
-      if (response.ok) {
-        alert("Successfull updated");
-        router.push("/posts");
-
-        const data = await response.json();
-        console.log(data);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
-    } catch (error) {
-      console.error("Error updating post:", error.message);
-    }
-  };
   // const handleUpdatePost = async () => {
-
   //   try {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+  //     let email = user.email;
+  //     // const { data: session ,erro} = await supabase.auth.getSession();
 
-  //    const {data,error}=await supabase.from('postovi').update({title,subtitle,text}).eq("id",params.id)
-  //   console.log(data);
-  //    if(error)
-  //    {throw error}else{
-  //     alert('Data updated! ');
-  //     router.push('/posts')
-  //    }
+  //     //   const authToken = session.session.access_token;
+  //     //   console.log(authToken)
+
+  //     // let metadata = user.id
+
+  //     const response = await fetch(`/api/update`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Authorization": `${authToken}`,
+  //       },
+  //       body: JSON.stringify({
+  //         title,
+  //         subtitle,
+  //         text,
+  //         id: params.id,
+  //         email,
+  //       }),
+  //     });
+  //     if (response.ok) {
+  //       alert("Successfull updated");
+  //       router.push("/posts");
+
+  //       const data = await response.json();
+  //       console.log(data);
+  //     } else {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.error);
+  //     }
   //   } catch (error) {
   //     console.error("Error updating post:", error.message);
   //   }
   // };
+  const handleUpdatePost = async () => {
+
+    try {
+
+     const {data,error}=await supabase.from('posts').update({title,subtitle,text}).eq("id",params.id)
+    console.log(data);
+     if(error)
+     {throw error}else{
+      alert('Data updated! ');
+      router.push('/posts')
+     }
+    } catch (error) {
+      console.error("Error updating post:", error.message);
+    }
+  };
   return (
     <div className="container">
       <h1>Edit Post</h1>

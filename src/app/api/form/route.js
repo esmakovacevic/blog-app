@@ -1,12 +1,13 @@
 import { supabase } from "@/app/lib/supabase";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import validator from "validator";
 
 export async function POST(request) {
   try {
-    const { title, subtitle, text, email } = await request.json();
-    console.log(email);
+  
+    const { title, subtitle, text, email ,filePath} = await request.json();
+    console.log(filePath,title);
     // Validation
     if (!validator.isLength(title, { min: 1 })) {
       throw new Error("Invalid title length");
@@ -28,16 +29,14 @@ export async function POST(request) {
       subtitle: sanitizedSubtitle,
       text: sanitizedText,
       email,
+      file:filePath
     });
     if (error) {
       throw error;
     }
-
+   
     return NextResponse.json({
-      title: sanitizedTitle,
-      subtitle: sanitizedSubtitle,
-      text: sanitizedText,
-      email,
+     
     });
   } catch (error) {
     return NextResponse.json(

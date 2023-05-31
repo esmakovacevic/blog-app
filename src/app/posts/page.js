@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 export default function Posts() {
   const [posts, setPosts] = useState([]);
   const [userRole, setUserRole] = useState(null);
+
   const router = useRouter();
   useEffect(() => {
     fetchPosts();
@@ -19,6 +20,7 @@ export default function Posts() {
       if (session) {
         // vracanje korisnigovg maila iz sesije
         const { email } = session.user;
+    
         console.log("email " + session.user.email);
         // fetch  role povezane sa korisnikovim mailom iz roles tabele
         const { data, error } = await supabase
@@ -26,7 +28,6 @@ export default function Posts() {
           .select("role")
           .eq("email", email)
           .single();
-        console.log('from tablle" ' + data);
         if (error) {
           console.error("Error fetching user role:", error.message);
         } else {
@@ -98,6 +99,15 @@ export default function Posts() {
               <Link href={`/posts/${post.id}`}>
                 <h2>{post.title}</h2>
                 <p>{post.subtitle}</p>
+                <div className="image">
+                <img
+                      src={`${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}${post.file}`}
+                      alt={post.title}
+                      width={230}
+                      height={225}
+                      style={{objectFit:'cover'}}
+                    />
+                    </div>
               </Link>
               {userRole === "admin" && ( // rendanje  delete i edit buttona samo ako je user admin
                 <div className="buttonhover">

@@ -15,6 +15,8 @@ const handleSubmit = async (event) => {
   const title = event.target.title.value;
   const subtitle = event.target.subtitle.value;
   const text = event.target.text.value;
+  const file=event.target.file.files[0];
+  console.log(file);
   
   const {
     data: { user },
@@ -36,13 +38,28 @@ const handleSubmit = async (event) => {
   }
 
   try {
+    const { data, error} = await supabase.storage.from('images').upload(file.name, file);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+  
+    if (!data) {
+      console.error('File upload failed');
+      return;
+    }
+  
+  const filePath=data.path;
+  console.log('FILE PATH: '+ filePath)
     const response = await fetch(`/api/form`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, subtitle, text, email }),
+      body: JSON.stringify({ title, subtitle, text, email,filePath }),
     });
+
     if (response.ok) {
       const data = await response.json();
       // Handle success
@@ -102,7 +119,7 @@ const handleSubmit = async (event) => {
             <Input
               className="input"
               type="file"
-              name="picture"
+              name="file"
               id="fileInput"
               style={{ display: "none" }}
               onChange={(e) => {
