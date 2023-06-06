@@ -3,34 +3,20 @@ import { NextResponse } from "next/server";
 
 export async function PUT(request) {
   try {
-    const { title, subtitle, text, id, email } = await request.json();
+    const formData = await request.formData();
+    const title = formData.get("title");
+    const subtitle = formData.get("subtitle");
+    const text = formData.get("text");
+    const photo = formData.get("photo");
 
-    console.log("Updating post with ID:", id);
-    console.log("Title: " + title);
-    console.log("Subtitle: " + subtitle);
-    console.log("Text: " + text);
-    console.log("Email: " + email);
-    //   const authToken = request.headers.get('Authorization');
-    //   if (!authToken) {
-    //     throw new Error('Authorization token is missing.');
-    //   }
-    //   console.log(authToken)
+    const { fileData } = await supabase.storage
+      .from("images")
+      .upload(photo.name, photo);
 
-    // const {  error: authError } = await supabase.auth.getUser(authToken);
-    // if (authError) {
-    //   throw new Error('Invalid authorization token.');
-    // }
-    // const { data:{user}, e} = await supabase.auth.getUser(authToken);
-
-    // if (user.email !== email) {
-    //   throw new Error('User is not authorized to update the post.');
-    // }
     const { data, error } = await supabase
       .from("posts")
-      .update({ title, subtitle, text })
-      .eq("id", id)
-    
-    console.log("Update response data:", data);
+      .update({ title, subtitle, text, file: photo.name })
+      .eq("id", id);
     console.log("Update response error:", error);
     if (error) {
       throw error;
@@ -44,7 +30,7 @@ export async function PUT(request) {
     });
   } catch (error) {
     console.log("Error:", error.message);
-    return NextResponse.json(
+    return NextResponse.error(
       { error: "Internal Server Error" },
       { status: 500 }
     );

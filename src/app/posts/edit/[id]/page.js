@@ -7,6 +7,8 @@ export default function Edit({ params }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [text, setText] = useState("");
+  const [photo, setPhoto] = useState(null);
+
   const router = useRouter();
   useEffect(() => {
     fetchPostData();
@@ -32,61 +34,67 @@ export default function Edit({ params }) {
     }
   };
 
+  const handleUpdatePost = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let email = user.email;
+  
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("subtitle", subtitle);
+      formData.append("text", text);
+      formData.append("id", params.id);
+      formData.append("photo", photo);
+  
+      const response = await fetch(`/api/update`, {
+        method: "PUT",
+        body: formData,
+      });
+  
+      if (response.ok) {
+        alert("Successfully updated");
+        router.push("/posts");
+  
+        const data = await response.json();
+        console.log(data);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+    } catch (error) {
+      console.error("Error updating post:", error.message);
+    }
+  };
   // const handleUpdatePost = async () => {
   //   try {
-  //     const {
-  //       data: { user },
-  //     } = await supabase.auth.getUser();
-  //     let email = user.email;
-  //     // const { data: session ,erro} = await supabase.auth.getSession();
+  //     console.log(photo.name);
+  //     if (photo) {
+  //       const { fileData } = await supabase.storage
+  //         .from("images")
+  //         .upload(photo.name, photo);
 
-  //     //   const authToken = session.session.access_token;
-  //     //   console.log(authToken)
+  //       const { data, error } = await supabase
+  //         .from("posts")
+  //         .update({ title, subtitle, text, file: photo.name })
+  //         .eq("id", params.id)
 
-  //     // let metadata = user.id
-
-  //     const response = await fetch(`/api/update`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Authorization": `${authToken}`,
-  //       },
-  //       body: JSON.stringify({
-  //         title,
-  //         subtitle,
-  //         text,
-  //         id: params.id,
-  //         email,
-  //       }),
-  //     });
-  //     if (response.ok) {
-  //       alert("Successfull updated");
-  //       router.push("/posts");
-
-  //       const data = await response.json();
   //       console.log(data);
-  //     } else {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error);
+  //       if (error) {
+  //         throw error;
+  //       } else {
+  //         alert("Data updated! ");
+  //         router.push("/posts");
+  //       }
   //     }
   //   } catch (error) {
   //     console.error("Error updating post:", error.message);
   //   }
   // };
-  const handleUpdatePost = async () => {
-
-    try {
-
-     const {data,error}=await supabase.from('posts').update({title,subtitle,text}).eq("id",params.id)
-    console.log(data);
-     if(error)
-     {throw error}else{
-      alert('Data updated! ');
-      router.push('/posts')
-     }
-    } catch (error) {
-      console.error("Error updating post:", error.message);
-    }
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    setPhoto(file);
   };
   return (
     <div className="container">
@@ -116,6 +124,10 @@ export default function Edit({ params }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
         ></textarea>
+      </div>
+      <div>
+        <label htmlFor="text">File: </label>
+        <input type="file" name="file" onChange={handlePhotoChange}></input>
       </div>
       <button onClick={handleUpdatePost}>Update</button>
     </div>

@@ -20,7 +20,7 @@ export default function Posts() {
       if (session) {
         // vracanje korisnigovg maila iz sesije
         const { email } = session.user;
-    
+ 
         console.log("email " + session.user.email);
         // fetch  role povezane sa korisnikovim mailom iz roles tabele
         const { data, error } = await supabase
@@ -37,7 +37,9 @@ export default function Posts() {
       } else {
         setUserRole(null);
       }
-    });
+      
+    }
+    );
 
     return () => {
       subscription.unsubscribe();
@@ -57,31 +59,46 @@ export default function Posts() {
   };
 
   const handleDeletePost = async (postId) => {
-    // console.log(postId)
-    //     try {
-    //       const response=await fetch(`/api/${postId}`,{
-    //         method:"DELETE",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       });
-    //     console.log(response);
-    //       if (response.ok) {
-    //         alert("Post deleted successfully")
-    //         fetchPosts();
-    //       }else{
-    //         throw new Error("Failed to delete post")
-    //       }
-    //     } catch (error) {
-    //       console.error("Error deleting post: ",error)
-    //     }
-    const { error } = await supabase.from("posts").delete().eq("id", postId);
-    if (error) {
-      console.error("Error deleting post:", error.message);
-    } else {
+
+    try {
+      // Fetch  post podatke to get the file path
+      const { data: post, error: fetchError } = await supabase
+        .from("posts")
+        .select("file")
+        .eq("id", postId)
+        .single();
+  
+      if (fetchError) {
+        console.error("Error fetching post:", fetchError.message);
+        return;
+      }
+     
+      //iybrisi  post iz db
+      const { error: deleteError } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", postId);
+  
+      if (deleteError) {
+        console.error("Error deleting post:", deleteError.message);
+        return;
+      }
+  console.log(post.file)
+      // izbrisi file iz storage
+      const { error: storageError } = await supabase.storage
+        .from("images")
+        .remove([post.file]);
+  
+      if (storageError) {
+        console.error("Error deleting file from storage:", storageError.message);
+        return;
+      }
+  
       console.log("Post deleted successfully");
       // Refresh the post list after deletion
       fetchPosts();
+    } catch (error) {
+      console.error("Error deleting post:", error.message);
     }
   };
 
@@ -106,6 +123,7 @@ export default function Posts() {
                       width={230}
                       height={225}
                       style={{objectFit:'cover'}}
+                     
                     />
                     </div>
               </Link>

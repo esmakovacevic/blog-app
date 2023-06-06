@@ -4,93 +4,86 @@ import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
 import { supabase } from "@/app/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import validator from "validator";
 
-
 export default function Posts() {
-  const router=useRouter();
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  
-  const title = event.target.title.value;
-  const subtitle = event.target.subtitle.value;
-  const text = event.target.text.value;
-  const file=event.target.file.files[0];
-  console.log(file);
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  let email = user.email;
-  console.log(email);
-  // Validation
-  if (!validator.isLength(title, { min: 1 })) {
-    alert("Invalid title length");
-    return;
-  }
-  if (!validator.isLength(subtitle, { min: 1 })) {
-    alert("Invalid subtitle length");
-    return;
-  }
-  if (!validator.isLength(text, { min: 1 })) {
-    alert("Invalid text length");
-    return;
-  }
+  const router = useRouter();
+  const [isPosting, setIsPosting] = useState(false);
 
-  try {
-    const { data, error} = await supabase.storage.from('images').upload(file.name, file);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsPosting(true);
+    const title = event.target.title.value;
+    const text = event.target.text.value;
+    const subtitle = event.target.subtitle.value;
+    const file = event.target.file.files[0];
+    const formData = new FormData();
 
-    if (error) {
-      console.error(error);
+    formData.append("title", title);
+    formData.append("subtitle", subtitle);
+    formData.append("text", text);
+    formData.append("file", file);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    let email = user.email;
+    console.log(email);
+    formData.append("email", email);
+    // Validation
+    if (!validator.isLength(title, { min: 1 })) {
+      alert("Invalid title length");
       return;
     }
-  
-    if (!data) {
-      console.error('File upload failed');
+    if (!validator.isLength(subtitle, { min: 1 })) {
+      alert("Invalid subtitle length");
       return;
     }
-  
-  const filePath=data.path;
-  console.log('FILE PATH: '+ filePath)
-    const response = await fetch(`/api/form`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, subtitle, text, email,filePath }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      // Handle success
-      console.log(data);
-      event.target.reset();
-      alert("Post added successfully!");
-      router.push('/posts')
-    } else {
-      throw new Error("Failed to submit form");
+    if (!validator.isLength(text, { min: 1 })) {
+      alert("Invalid text length");
+      return;
     }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  }
+    console.log(file);
 
-  // const { insertData, insertError } = await supabase
-  //   .from("posts")
-  //   .insert({ title, subtitle, text});
+    try {
+      const response = await fetch(`/api/form`, {
+        method: "POST",
+        body: formData,
+      });
 
-  // if (insertError) {
-  //   console.error(insertError);
-  //   return;
-  // }
+      if (response.ok) {
+        const data = await response.json();
+        // Handle success
+        console.log(data);
+        event.target.reset();
+        setIsPosting(false);
+        alert("Post added successfully!");
+        router.push("/posts");
+      } else {
+        throw new Error("Failed to submit form");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
 
-  // console.log(insertData);
-  // event.target.reset();
-  // alert("Post added successfully!");
-};
+    // const { insertData, insertError } = await supabase
+    //   .from("posts")
+    //   .insert({ title, subtitle, text});
+
+    // if (insertError) {
+    //   console.error(insertError);
+    //   return;
+    // }
+
+    // console.log(insertData);
+    // event.target.reset();
+    // alert("Post added successfully!");
+  };
   return (
     <div className="mainaddwrap">
       <div className="addwrap">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <p>Title</p>
 
           <Input
@@ -147,10 +140,11 @@ const handleSubmit = async (event) => {
             />
           </div>
           <div className="button">
-            <Button type="submit" className="button">
+          <Button type="submit" className="button">
               Submit
             </Button>
           </div>
+          {isPosting ?( <p>Posting...</p>):(<p></p>)}
         </form>
       </div>
     </div>
