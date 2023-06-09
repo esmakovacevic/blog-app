@@ -5,7 +5,7 @@ import Link from "next/link";
 import Button from "./components/Button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { supabase } from "./lib/supabase";
+import { supabase } from "../../lib/supabase";
 import Input from "./components/Input";
 import { useEffect } from "react";
 import validator from "validator";

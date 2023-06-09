@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 import Button from "./Button";
 
 const { default: Link } = require("next/link");

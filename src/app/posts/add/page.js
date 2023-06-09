@@ -2,7 +2,7 @@
 
 import Button from "@/app/components/Button";
 import Input from "@/app/components/Input";
-import { supabase } from "@/app/lib/supabase";
+import { supabase } from "../../../../lib/supabase";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import validator from "validator";
@@ -31,7 +31,7 @@ export default function Posts() {
     let email = user.email;
     console.log(email);
     formData.append("email", email);
-    // Validation
+    // // Validation
     if (!validator.isLength(title, { min: 1 })) {
       alert("Invalid title length");
       return;

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 
 import Link from "next/link";
 import Button from "../components/Button";
@@ -59,49 +59,21 @@ export default function Posts() {
   };
 
   const handleDeletePost = async (postId) => {
-
     try {
-      // Fetch  post podatke to get the file path
-      const { data: post, error: fetchError } = await supabase
-        .from("posts")
-        .select("file")
-        .eq("id", postId)
-        .single();
+   
+      const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
   
-      if (fetchError) {
-        console.error("Error fetching post:", fetchError.message);
-        return;
-      }
-     
-      //iybrisi  post iz db
-      const { error: deleteError } = await supabase
-        .from("posts")
-        .delete()
-        .eq("id", postId);
-  
-      if (deleteError) {
-        console.error("Error deleting post:", deleteError.message);
-        return;
-      }
-  console.log(post.file)
-      // izbrisi file iz storage
-      const { error: storageError } = await supabase.storage
-        .from("images")
-        .remove([post.file]);
-  
-      if (storageError) {
-        console.error("Error deleting file from storage:", storageError.message);
-        return;
+      if (!response.ok) {
+        throw new Error('Error deleting post');
+      }else{
+        fetchPosts();
       }
   
-      console.log("Post deleted successfully");
-      // Refresh the post list after deletion
-      fetchPosts();
+
     } catch (error) {
-      console.error("Error deleting post:", error.message);
+      console.error('Error deleting post:', error.message);
     }
   };
-
   const handleEditPost = (postId) => {
     router.push(`/posts/edit/${postId}`);
   };
