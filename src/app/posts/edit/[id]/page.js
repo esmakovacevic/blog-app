@@ -34,64 +34,48 @@ export default function Edit({ params }) {
     }
   };
 
-  // const handleUpdatePost = async () => {
-  //   try {
-  //     const {
-  //       data: { user },
-  //     } = await supabase.auth.getUser();
-  //     let email = user.email;
-  
-  //     const formData = new FormData();
-  //     formData.append("title", title);
-  //     formData.append("subtitle", subtitle);
-  //     formData.append("text", text);
-  //     formData.append("id", params.id);
-  //     formData.append("photo", photo);
-  
-  //     const response = await fetch(`/api/update`, {
-  //       method: "PUT",
-  //       body: formData,
-  //     });
-  
-  //     if (response.ok) {
-  //       alert("Successfully updated");
-  //       router.push("/posts");
-  
-  //       const data = await response.json();
-  //       console.log(data);
-  //     } else {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating post:", error.message);
-  //   }
-  // };
-  const handleUpdatePost = async () => {
+  const handleUpdatePost = async (event) => {
+    event.preventDefault();
     try {
-      console.log(photo.name);
-      if (photo) {
-        const { fileData } = await supabase.storage
-          .from("images")
-          .upload(photo.name, photo);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      let email = user.email;
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token=session.access_token;
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("subtitle", subtitle);
+      formData.append("text", text);
+      formData.append("id", params.id);
+      formData.append("photo", photo);
+      formData.append("email", email);
 
-        const { data, error } = await supabase
-          .from("posts")
-          .update({ title, subtitle, text, file: photo.name })
-          .eq("id", params.id)
+      const response = await fetch("/api/update", {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (response.ok) {
+        alert("Successfully updated");
+        const data = await response.json();
         console.log(data);
-        if (error) {
-          throw error;
-        } else {
-          alert("Data updated! ");
-          router.push("/posts");
-        }
+      } else {
+        console.log("Response status:", response.status);
+        const errorData = await response.json();
+        console.log("Error data:", errorData);
+        throw new Error(errorData.error);
       }
     } catch (error) {
       console.error("Error updating post:", error.message);
     }
   };
+
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     setPhoto(file);
@@ -99,37 +83,39 @@ export default function Edit({ params }) {
   return (
     <div className="container">
       <h1>Edit Post</h1>
-      <div>
-        <label htmlFor="title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="subtitle">Subtitle:</label>
-        <input
-          type="text"
-          id="subtitle"
-          value={subtitle}
-          onChange={(e) => setSubtitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="text">Text:</label>
-        <textarea
-          id="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        ></textarea>
-      </div>
-      <div>
-        <label htmlFor="text">File: </label>
-        <input type="file" name="file" onChange={handlePhotoChange}></input>
-      </div>
-      <button onClick={handleUpdatePost}>Update</button>
+      <form encType="multipart/form-data">
+        <div>
+          <label htmlFor="title">Title:</label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="subtitle">Subtitle:</label>
+          <input
+            type="text"
+            id="subtitle"
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="text">Text:</label>
+          <textarea
+            id="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          ></textarea>
+        </div>
+        <div>
+          <p>File:</p>
+          <input type="file" name="file" onChange={handlePhotoChange}></input>
+        </div>
+        <button onClick={handleUpdatePost}>Update</button>
+      </form>
     </div>
   );
 }

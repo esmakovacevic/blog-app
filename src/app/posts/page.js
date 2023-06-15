@@ -20,7 +20,7 @@ export default function Posts() {
       if (session) {
         // vracanje korisnigovg maila iz sesije
         const { email } = session.user;
- 
+
         console.log("email " + session.user.email);
         // fetch  role povezane sa korisnikovim mailom iz roles tabele
         const { data, error } = await supabase
@@ -37,9 +37,7 @@ export default function Posts() {
       } else {
         setUserRole(null);
       }
-      
-    }
-    );
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -47,31 +45,37 @@ export default function Posts() {
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
+    const token = await supabase.auth.getSession();
+    const access_token = token.data.session.access_token;
+    try {
+      const response = await fetch("/api/select", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.error) {
+        console.error("Error fetching posts:", response.error.message);
+      } else {
+        setPosts(data);
+      }
+    } catch (error) {
       console.error("Error fetching posts:", error.message);
-    } else {
-      setPosts(data);
     }
   };
 
   const handleDeletePost = async (postId) => {
     try {
-   
-      const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
-  
+      const response = await fetch(`/posts/${postId}`, { method: "DELETE" });
+
       if (!response.ok) {
-        throw new Error('Error deleting post');
-      }else{
+        throw new Error("Error deleting post");
+      } else {
         fetchPosts();
       }
-  
-
     } catch (error) {
-      console.error('Error deleting post:', error.message);
+      console.error("Error deleting post:", error.message);
     }
   };
   const handleEditPost = (postId) => {
@@ -89,15 +93,14 @@ export default function Posts() {
                 <h2>{post.title}</h2>
                 <p>{post.subtitle}</p>
                 <div className="image">
-                <img
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}${post.file}`}
-                      alt={post.title}
-                      width={230}
-                      height={225}
-                      style={{objectFit:'cover'}}
-                     
-                    />
-                    </div>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}${post.file}`}
+                    alt={post.title}
+                    width={230}
+                    height={225}
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
               </Link>
               {userRole === "admin" && ( // rendanje  delete i edit buttona samo ako je user admin
                 <div className="buttonhover">

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import validator from "validator";
 
-export default function Posts() {
+export default function Add() {
   const router = useRouter();
   const [isPosting, setIsPosting] = useState(false);
 
@@ -67,18 +67,7 @@ export default function Posts() {
       console.error("Error submitting form:", error);
     }
 
-    // const { insertData, insertError } = await supabase
-    //   .from("posts")
-    //   .insert({ title, subtitle, text});
 
-    // if (insertError) {
-    //   console.error(insertError);
-    //   return;
-    // }
-
-    // console.log(insertData);
-    // event.target.reset();
-    // alert("Post added successfully!");
   };
   return (
     <div className="mainaddwrap">
