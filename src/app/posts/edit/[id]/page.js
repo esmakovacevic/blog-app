@@ -53,7 +53,7 @@ export default function Edit({ params }) {
       formData.append("photo", photo);
       formData.append("email", email);
 
-      const response = await fetch("/api/update", {
+      const response = await fetch("/api/posts/update", {
         method: "PUT",
         body: formData,
         headers: {

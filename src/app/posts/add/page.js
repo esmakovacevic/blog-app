@@ -45,11 +45,15 @@ export default function Add() {
       return;
     }
     console.log(file);
-
+    const token = await supabase.auth.getSession();
+    const access_token = token.data.session.access_token;
     try {
-      const response = await fetch(`/api/form`, {
+      const response = await fetch(`/api/posts/form`, {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
       });
 
       if (response.ok) {

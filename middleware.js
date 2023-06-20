@@ -5,6 +5,7 @@ const authenticateToken = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.decode(token);
     const verifiedToken = jwt.verify(token, process.env.NEXT_PUBLIC_SUPABASE_JWT_KEY);
+    console.log(decodedToken)
     const email = verifiedToken.email;
     req.email = email; 
     next(); 

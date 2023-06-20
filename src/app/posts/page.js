@@ -47,8 +47,9 @@ export default function Posts() {
   const fetchPosts = async () => {
     const token = await supabase.auth.getSession();
     const access_token = token.data.session.access_token;
+    console.log(access_token)
     try {
-      const response = await fetch("/api/select", {
+      const response = await fetch("/api/posts/select", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${access_token}`,
@@ -66,8 +67,12 @@ export default function Posts() {
   };
 
   const handleDeletePost = async (postId) => {
+    const token = await supabase.auth.getSession();
+    const access_token = token.data.session.access_token;
     try {
-      const response = await fetch(`/posts/${postId}`, { method: "DELETE" });
+      const response = await fetch(`/api/posts/${postId}`, { method: "DELETE" , headers: {
+        Authorization: `Bearer ${access_token}`,
+      },});
 
       if (!response.ok) {
         throw new Error("Error deleting post");
